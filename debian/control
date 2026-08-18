@@ -1,0 +1,23 @@
+Source: spacemit-firmware
+Section: metapackages
+Priority: optional
+Maintainer: Valentin Haudiquet <valentin.haudiquet@canonical.com>
+Build-Depends: debhelper-compat (= 13)
+Standards-Version: 4.6.2
+Rules-Requires-Root: no
+
+Package: spacemit-firmware
+Architecture: all
+Depends: ${misc:Depends},
+         edk2-spacemit,
+         spacemit-ec-firmware,
+         opensbi-spacemit,
+         u-boot-spl-spacemit,
+         esos-spacemit
+Description: Metapackage for SpacemiT platform firmware
+ This metapackage depends on the SpacemiT platform firmware and boot
+ related packages: EDK2, EC firmware, OpenSBI, the U-Boot SPL and ESOS.
+ .
+ It installs no files of its own; it exists only to pull in the
+ SpacemiT firmware/boot packages in one step, without the GPU userspace
+ driver (img-gpu-powervr) or the linux-firmware-spacemit blobs.

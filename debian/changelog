@@ -1,0 +1,6 @@
+spacemit-firmware (1.0) resolute; urgency=medium
+
+  * Initial release: metapackage pulling in the SpacemiT firmware/boot
+    packages (EDK2, EC firmware, OpenSBI, U-Boot SPL, ESOS).
+
+ -- Valentin Haudiquet <valentin.haudiquet@canonical.com>  Tue, 18 Aug 2026 15:59:51 +0200
