@@ -1,3 +1,22 @@
+spacemit-firmware (1.1) resolute; urgency=medium
+
+  * Ship a unified flashing script (flash-firmware.sh) that writes the
+    whole boot-chain firmware set provided by the dependency packages
+    (bootinfo, FSBL and the U-Boot environment from u-boot-spl-spacemit,
+    OpenSBI, ESOS, and EDK2 when booted via UEFI) in one transaction:
+    every image is preflight-checked, NOR regions are erased before
+    being written and every image is read back and verified.
+  * Take over the flashing that used to live in the postinsts of
+    edk2-spacemit, opensbi-spacemit, esos-spacemit and
+    u-boot-spl-spacemit; those packages now only ship their images.
+  * Add dpkg triggers on the firmware image directories so that
+    upgrading any of those packages reflashes the affected images even
+    when this metapackage's own version does not change.
+  * d/control: depend on kmod and mtd-utils for modprobe, flashcp and
+    mtd_debug, which the flashing script uses directly.
+
+ -- Valentin Haudiquet <valentin.haudiquet@canonical.com>  Thu, 10 Sep 2026 15:45:49 +0200
+
 spacemit-firmware (1.0) resolute; urgency=medium
 
   * Initial release: metapackage pulling in the SpacemiT firmware/boot

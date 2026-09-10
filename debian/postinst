@@ -1,0 +1,17 @@
+#!/bin/sh
+set -e
+
+# The metapackage carries the firmware flashing for every package it
+# depends on, see /usr/lib/spacemit-firmware/flash-firmware.sh.  It runs
+# both on "configure" and on "triggered": dpkg file triggers (see the
+# triggers file) watch the image directories of the firmware packages,
+# so upgrading any of them re-flashes the affected images even when
+# this metapackage's own version does not change.
+
+case "$1" in
+configure|triggered)
+    /usr/lib/spacemit-firmware/flash-firmware.sh
+    ;;
+esac
+
+exit 0

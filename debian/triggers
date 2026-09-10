@@ -1,0 +1,6 @@
+# Re-flash the firmware whenever any of the firmware packages unpacks
+# new images into its image directory.
+interest-noawait /usr/lib/u-boot/spacemit
+interest-noawait /usr/lib/uefi/spacemit
+interest-noawait /usr/lib/riscv64-linux-gnu/opensbi/generic
+interest-noawait /usr/lib/riscv64-linux-gnu/esos

@@ -13,11 +13,15 @@ Depends: ${misc:Depends},
          spacemit-ec-firmware,
          opensbi-spacemit,
          u-boot-spl-spacemit,
-         esos-spacemit
+         esos-spacemit,
+         kmod,
+         mtd-utils
 Description: Metapackage for SpacemiT platform firmware
  This metapackage depends on the SpacemiT platform firmware and boot
  related packages: EDK2, EC firmware, OpenSBI, the U-Boot SPL and ESOS.
  .
- It installs no files of its own; it exists only to pull in the
- SpacemiT firmware/boot packages in one step, without the GPU userspace
- driver (img-gpu-powervr) or the linux-firmware-spacemit blobs.
+ It also ships the unified flashing script that writes the whole
+ firmware set (bootinfo, FSBL, U-Boot environment, OpenSBI, ESOS and,
+ under UEFI, EDK2) to the boot medium in one verified transaction, and
+ re-runs it via dpkg triggers whenever any of the firmware packages
+ is upgraded.
