@@ -132,20 +132,33 @@ get_boot_device_from_mode() {
 }
 
 # Derive the base (whole-disk) device from a rootfs device path.
+# Matches any index of each device kind (mmcblk0, mmcblk2, nvme3n1,
+# sdb, ...): the drive kind is part of the kernel device name, so we
+# only need to strip the partition suffix -- "pN" for nvme/mmcblk
+# (nvme0n1p3 -> nvme0n1, mmcblk0p2 -> mmcblk0) and bare digits for sd
+# (sda1 -> sda).  Whole-disk paths pass through unchanged.
 get_base_device() {
     local dev=$1
     case $dev in
-    "/dev/mmcblk0"*)
-        echo "/dev/mmcblk0"
+    /dev/nvme*|/dev/mmcblk*)
+        # Strip an optional "pN" partition suffix.  Whole-disk names
+        # never end in "pN", so they are returned as-is.
+        echo "${dev%p[0-9]*}"
         ;;
-    "/dev/mmcblk2"*)
-        echo "/dev/mmcblk2"
+    /dev/sd*)
+        # sd partitions are bare digits; strip them one by one (POSIX
+        # sh has no way to strip a variable-length digit suffix at once).
+        while :; do
+            case $dev in
+            *[0-9]) dev=${dev%?} ;;
+            *) break ;;
+            esac
+        done
+        echo "$dev"
         ;;
-    "/dev/sda"*)
-        echo "/dev/sda"
-        ;;
-    "/dev/nvme0n1"*)
-        echo "/dev/nvme0n1"
+    /dev/mtdblock*)
+        # MTD block devices have no partition suffix at this level.
+        echo "$dev"
         ;;
     *)
         echo ""
@@ -219,7 +232,7 @@ if [ -z "$TARGET_DEVICE" ]; then
 fi
 
 case $TARGET_DEVICE in
-"/dev/mmcblk0"|"/dev/mmcblk2"|"/dev/sda")
+/dev/mmcblk*|/dev/sd*)
     BOOTINFO_FILE=bootinfo_block.bin
     BOOTINFO_DEV=$TARGET_DEVICE;  BOOTINFO_OFF=$((1024 * 1024))
     FSBL_DEV=$TARGET_DEVICE;      FSBL_OFF=$((1536 * 1024))
@@ -263,7 +276,7 @@ case $TARGET_DEVICE in
         EDK2_DEV=/dev/mtdblock0;     EDK2_OFF=$((2112 * 1024))
     fi
     ;;
-"/dev/nvme0n1")
+/dev/nvme*)
     if [ -f "/proc/mtd" ]; then
         # NVMe rootfs + NOR boot medium.
         BOOTINFO_FILE=bootinfo_spinor.bin
